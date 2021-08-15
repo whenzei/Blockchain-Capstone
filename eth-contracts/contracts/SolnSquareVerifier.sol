@@ -44,7 +44,7 @@ contract SolnSquareVerifier is ERC721MintableComplete {
         emit SolutionAdded(newSolution.index, msg.sender);
     }
 
-    function mint(
+    function mintNFT(
         uint256[2] memory a,
         uint256[2][2] memory b,
         uint256[2] memory c,
