@@ -32,7 +32,7 @@ contract('TestSolnSquareVerifier', accounts => {
         })
 
         await solnSquareVerifier.addSolution(proof.a, proof.b, proof.c, inputs, { from: account_one });
-        await solnSquareVerifier.mintNFT(proof.a, proof.b, proof.c, inputs, { from: account_one });
+        await solnSquareVerifier.mintNFT(account_one, proof.a, proof.b, proof.c, inputs, { from: account_one });
 
         const tokenCount = await solnSquareVerifier.balanceOf.call(account_one);
 

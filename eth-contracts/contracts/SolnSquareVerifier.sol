@@ -45,6 +45,7 @@ contract SolnSquareVerifier is ERC721MintableComplete {
     }
 
     function mintNFT(
+        address to,
         uint256[2] memory a,
         uint256[2][2] memory b,
         uint256[2] memory c,
@@ -61,8 +62,7 @@ contract SolnSquareVerifier is ERC721MintableComplete {
         );
 
         _uniqueSolutions[key].isMinted = true;
-        return
-            super.mint(_uniqueSolutions[key].addr, _uniqueSolutions[key].index);
+        return super.mint(to, _uniqueSolutions[key].index);
     }
 }
 
