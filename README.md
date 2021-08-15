@@ -18,7 +18,7 @@ Capstone project to build a decentralized housing product. Contract is deployed 
 
 # Contract ABI
 
-- The contract abis can be found in the individual json builds [here](https://github.com/whenzei/Blockchain-Capstone/tree/master/eth-contracts/build/contracts)
+- The contract abis can be found in the individual json builds [here](https://github.com/whenzei/Blockchain-Capstone/tree/master/eth-contracts/SolnSquareVerifierAbi.txt)
 
 # Open Sea Collection
 
