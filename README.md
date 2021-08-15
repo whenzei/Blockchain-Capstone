@@ -10,6 +10,8 @@ Capstone project to build a decentralized housing product. Contract is deployed 
 
 - `cd eth-contracts && truffle test` (Make sure that truffle-config.js is configured wwith the right host and port for the local node)
 
+![test](images/test.png)
+
 # Contract address
 
 - https://rinkeby.etherscan.io/address/0x462C7D949b5Ae60F3D8b24fce4e4e4bCBE629c5c
