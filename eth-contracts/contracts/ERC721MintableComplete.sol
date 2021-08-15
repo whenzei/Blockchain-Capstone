@@ -637,7 +637,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 //      -calls the superclass mint and setTokenURI functions
 contract ERC721MintableComplete is
     ERC721Metadata(
-        "RealEstateTrading Token",
+        "Real Estate NFT Trading",
         "RET",
         "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/"
     )
