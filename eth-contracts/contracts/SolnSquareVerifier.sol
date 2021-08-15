@@ -1,59 +1,76 @@
 pragma solidity >=0.4.21 <0.6.0;
 
-// TODO define a contract call to the zokrates generated solidity contract <Verifier> or <renamedVerifier>
+import "./ERC721MintableComplete.sol";
 
+contract SolnSquareVerifier is ERC721MintableComplete {
+    Solution[] private _solutions;
+    Verifier private _verifier;
 
+    mapping(bytes32 => Solution) private _uniqueSolutions;
+    struct Solution {
+        uint256 index;
+        address addr;
+        bool isMinted;
+    }
 
-// TODO define another contract named SolnSquareVerifier that inherits from your ERC721Mintable class
+    constructor(address verifierAddress) public {
+        _verifier = Verifier(verifierAddress);
+    }
 
+    event SolutionAdded(uint256 index, address addr);
 
+    function addSolution(
+        uint256[2] memory a,
+        uint256[2][2] memory b,
+        uint256[2] memory c,
+        uint256[2] memory inputs
+    ) public {
+        bytes32 key = keccak256(abi.encodePacked(a, b, c, inputs));
 
-// TODO define a solutions struct that can hold an index & an address
+        address newAddr = _uniqueSolutions[key].addr;
+        require(newAddr == address(0), "Solution already exists");
 
+        bool verified = _verifier.verifyTx(a, b, c, inputs);
+        require(verified, "Solution failed verification");
 
-// TODO define an array of the above struct
+        Solution memory newSolution = Solution(
+            _solutions.length,
+            msg.sender,
+            false
+        );
+        _solutions.push(newSolution);
+        _uniqueSolutions[key] = newSolution;
 
+        emit SolutionAdded(newSolution.index, msg.sender);
+    }
 
-// TODO define a mapping to store unique solutions submitted
+    function mint(
+        uint256[2] memory a,
+        uint256[2][2] memory b,
+        uint256[2] memory c,
+        uint256[2] memory inputs
+    ) public returns (bool) {
+        bytes32 key = keccak256(abi.encodePacked(a, b, c, inputs));
+        require(
+            _uniqueSolutions[key].addr == msg.sender,
+            "Not owner of solution"
+        );
+        require(
+            _uniqueSolutions[key].isMinted == false,
+            "Token has been minted with this solution"
+        );
 
+        _uniqueSolutions[key].isMinted = true;
+        return
+            super.mint(_uniqueSolutions[key].addr, _uniqueSolutions[key].index);
+    }
+}
 
-
-// TODO Create an event to emit when a solution is added
-
-
-
-// TODO Create a function to add the solutions to the array and emit the event
-
-
-
-// TODO Create a function to mint new NFT only after the solution has been verified
-//  - make sure the solution is unique (has not been used before)
-//  - make sure you handle metadata as well as tokenSuplly
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+contract Verifier {
+    function verifyTx(
+        uint256[2] memory a,
+        uint256[2][2] memory b,
+        uint256[2] memory c,
+        uint256[2] memory input
+    ) public view returns (bool);
+}

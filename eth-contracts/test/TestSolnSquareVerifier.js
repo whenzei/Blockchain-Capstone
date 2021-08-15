@@ -1,3 +1,43 @@
-// Test if a new solution can be added for contract - SolnSquareVerifier
+const SolnSquareVerifier = artifacts.require('SolnSquareVerifier');
+const Verifier = artifacts.require('Verifier');
+const {proof, inputs} = require('./proof.json');
 
-// Test if an ERC721 token can be minted for contract - SolnSquareVerifier
+contract('TestSolnSquareVerifier', accounts => {
+
+    const account_one = accounts[0];
+    let solnSquareVerifier;
+    let verifier;
+
+    beforeEach("setup", async () => {
+        verifier = await Verifier.new();
+        solnSquareVerifier = await SolnSquareVerifier.new(verifier.address, {from: account_one});
+    })
+
+    it("Test add solution success", async() => {        
+        let eventTriggered = false;
+        await solnSquareVerifier.SolutionAdded((err, res) => {
+            eventTriggered = true;
+        })
+
+        await solnSquareVerifier.addSolution(proof.a, proof.b, proof.c, inputs, {from: account_one});
+
+        assert.equal(eventTriggered, true, "Solution not added");
+
+    });
+
+    it("Test can verify solution and mint success", async() => {        
+        let eventTriggered = false;
+        await solnSquareVerifier.SolutionAdded((err, res) => {
+            eventTriggered = true;
+        })
+
+        await solnSquareVerifier.addSolution(proof.a, proof.b, proof.c, inputs, {from: account_one});
+        await solnSquareVerifier.mint(proof.a, proof.b, proof.c, inputs, {from: account_one});
+
+        const tokenCount = await solnSquareVerifier.balanceOf.call(account_one);
+
+        assert.equal(eventTriggered, true, "Solution not added");
+        assert.equal(tokenCount, 1, "Token not minted");
+    });
+
+});
