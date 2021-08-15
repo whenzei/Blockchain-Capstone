@@ -12,7 +12,7 @@ Capstone project to build a decentralized housing product. Contract is deployed 
 
 # Contract address
 
-- https://rinkeby.etherscan.io/address/0x64d46331c1e5c093a233363a06f833e3416298fb
+- https://rinkeby.etherscan.io/address/0x462C7D949b5Ae60F3D8b24fce4e4e4bCBE629c5c
 
 # Contract ABI
 
@@ -20,7 +20,7 @@ Capstone project to build a decentralized housing product. Contract is deployed 
 
 # Open Sea Collection
 
-https://testnets.opensea.io/collection/realestate-nft
+https://testnets.opensea.io/collection/realestatetrading-token
 
 # Project Resources
 

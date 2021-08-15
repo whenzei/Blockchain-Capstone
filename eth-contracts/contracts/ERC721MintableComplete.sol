@@ -171,14 +171,23 @@ contract ERC721 is Pausable, ERC165 {
 
     function balanceOf(address owner) public view returns (uint256) {
         // TODO return the token balance of given address
-        Counters.Counter memory counter = _ownedTokensCount[owner];
-        return counter._value;
-        // TIP: remember the functions to use for Counters. you can refresh yourself with the link above
+        require(
+            owner != address(0),
+            "ERC721: balance query for the zero address"
+        );
+
+        return _ownedTokensCount[owner].current();
     }
 
     function ownerOf(uint256 tokenId) public view returns (address) {
         // TODO return the owner of the given tokenId
-        return _tokenOwner[tokenId];
+        address owner = _tokenOwner[tokenId];
+        require(
+            owner != address(0),
+            "ERC721: owner query for nonexistent token"
+        );
+
+        return owner;
     }
 
     //    @dev Approves another address to transfer the given token ID
@@ -187,21 +196,25 @@ contract ERC721 is Pausable, ERC165 {
         // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
         // TODO add 'to' address to token approvals
         // TODO emit Approval Event
-        require(
-            to != ownerOf(tokenId),
-            "Given address is same as token owner address"
-        );
-        require(
-            msg.sender == ownerOf(tokenId) || isApprovedForAll(to, msg.sender),
-            "Sender not authorized to approve"
-        );
-        _tokenApprovals[tokenId] = to;
+        address owner = ownerOf(tokenId);
+        require(to != owner, "ERC721: approval to current owner");
 
-        emit Approval(ownerOf(tokenId), to, tokenId);
+        require(
+            msg.sender == owner || isApprovedForAll(owner, msg.sender),
+            "ERC721: approve caller is not owner nor approved for all"
+        );
+
+        _tokenApprovals[tokenId] = to;
+        emit Approval(owner, to, tokenId);
     }
 
     function getApproved(uint256 tokenId) public view returns (address) {
         // TODO return token approval if it exists
+        require(
+            _exists(tokenId),
+            "ERC721: approved query for nonexistent token"
+        );
+
         return _tokenApprovals[tokenId];
     }
 
@@ -212,7 +225,8 @@ contract ERC721 is Pausable, ERC165 {
      * @param approved representing the status of the approval to be set
      */
     function setApprovalForAll(address to, bool approved) public {
-        require(to != msg.sender);
+        require(to != msg.sender, "ERC721: approve to caller");
+
         _operatorApprovals[msg.sender][to] = approved;
         emit ApprovalForAll(msg.sender, to, approved);
     }
@@ -281,6 +295,10 @@ contract ERC721 is Pausable, ERC165 {
         view
         returns (bool)
     {
+        require(
+            _exists(tokenId),
+            "ERC721: operator query for nonexistent token"
+        );
         address owner = ownerOf(tokenId);
         return (spender == owner ||
             getApproved(tokenId) == spender ||
@@ -294,7 +312,7 @@ contract ERC721 is Pausable, ERC165 {
         // TODO mint tokenId to given address & increase token count of owner
         // TODO emit Transfer event
         require(!_exists(tokenId), "Token exists");
-        require(to != address(0) || !to.isContract(), "Invalid to address");
+        require(to != address(0), "Invalid to address");
 
         _tokenOwner[tokenId] = to;
         _ownedTokensCount[to].increment();
@@ -315,10 +333,7 @@ contract ERC721 is Pausable, ERC165 {
         // TODO: update token counts & transfer ownership of the token ID
         // TODO: emit correct event
         require(from == ownerOf(tokenId));
-        require(
-            to != address(0) && !to.isContract(),
-            "Invalid destination address"
-        );
+        require(to != address(0), "Invalid destination address");
         _clearApproval(tokenId);
         _ownedTokensCount[from].decrement();
         _ownedTokensCount[to].increment();
@@ -622,7 +637,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 //      -calls the superclass mint and setTokenURI functions
 contract ERC721MintableComplete is
     ERC721Metadata(
-        "RealEstate NFT",
+        "RealEstateTrading Token",
         "RET",
         "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/"
     )
